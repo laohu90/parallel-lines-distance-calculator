@@ -133,6 +133,15 @@ export interface TranslationDictionary {
   shareCopied: string;
   printBtn: string;
   footerText: string;
+
+  // Related Tools & Mobile Navigation
+  relatedToolsNav: string;
+  relatedToolsTitle: string;
+  relatedToolsSubtitle: string;
+  openToolBtn: string;
+  mobileQuickBarDistance: string;
+  mobileScrollTop: string;
+  mobileViewDerivations: string;
 }
 
 export const translations: Record<SupportedLanguage, TranslationDictionary> = {
@@ -295,6 +304,13 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
     shareCopied: 'Link Copied to Clipboard!',
     printBtn: 'Print Worksheet',
     footerText: 'Distance Between Parallel Lines Calculator · High School & College Analytic Geometry Solver',
+    relatedToolsNav: 'Related Calculators',
+    relatedToolsTitle: 'Related Analytic Geometry & Algebra Calculators',
+    relatedToolsSubtitle: 'Explore interactive companion tools for point-to-line, line intersections, angles, and 3D planes.',
+    openToolBtn: 'Open Calculator',
+    mobileQuickBarDistance: 'Distance d',
+    mobileScrollTop: 'Top',
+    mobileViewDerivations: 'Steps',
   },
 
   es: {
@@ -456,6 +472,13 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
     shareCopied: '¡Enlace copiado al portapapeles!',
     printBtn: 'Imprimir Ficha',
     footerText: 'Calculadora de Distancia Entre Rectas Paralelas · Geometría Analítica Paso a Paso',
+    relatedToolsNav: 'Otras Calculadoras',
+    relatedToolsTitle: 'Calculadoras de Geometría Analítica Relacionadas',
+    relatedToolsSubtitle: 'Herramientas interactivas para punto a recta, intersección, ángulos y planos 3D.',
+    openToolBtn: 'Abrir Calculadora',
+    mobileQuickBarDistance: 'Distancia d',
+    mobileScrollTop: 'Subir',
+    mobileViewDerivations: 'Pasos',
   },
 
   fr: {
@@ -617,6 +640,13 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
     shareCopied: 'Lien copié dans le presse-papiers!',
     printBtn: 'Imprimer la Fiche',
     footerText: 'Calculateur de Distance Entre Deux Droites Parallèles · Géométrie Analytique Lycée & Supérieur',
+    relatedToolsNav: 'Calculateurs Associés',
+    relatedToolsTitle: 'Calculateurs de Géométrie Analytique Connexes',
+    relatedToolsSubtitle: 'Outils interactifs pour point-droite, intersections, angles et plans 3D.',
+    openToolBtn: 'Ouvrir l\'Outil',
+    mobileQuickBarDistance: 'Distance d',
+    mobileScrollTop: 'Haut',
+    mobileViewDerivations: 'Étapes',
   },
 
   pt: {
@@ -778,6 +808,13 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
     shareCopied: 'Link copiado para a área de transferência!',
     printBtn: 'Imprimir Folha de Exercício',
     footerText: 'Calculadora de Distância Entre Retas Paralelas · Geometria Analítica para Ensino Médio e Vestibulares',
+    relatedToolsNav: 'Outras Calculadoras',
+    relatedToolsTitle: 'Calculadoras de Geometria Analítica Relacionadas',
+    relatedToolsSubtitle: 'Ferramentas interactivas para ponto a reta, interseção, ângulos e planos 3D.',
+    openToolBtn: 'Abrir Calculadora',
+    mobileQuickBarDistance: 'Distância d',
+    mobileScrollTop: 'Topo',
+    mobileViewDerivations: 'Passos',
   },
 
   zh: {
@@ -939,5 +976,12 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
     shareCopied: '专属题目链接已复制！',
     printBtn: '打印解题卡/作业纸',
     footerText: '两平行直线间距离计算器 · 高二解析几何逐步推导与配方法拆解 · 国际多语言版',
+    relatedToolsNav: '相关计算器',
+    relatedToolsTitle: '相关解析几何与代数计算器矩阵',
+    relatedToolsSubtitle: '包含点线距离、两线交点、夹角、空间面面与异面直线等配套公式与交互式工具',
+    openToolBtn: '直接使用 / 验算',
+    mobileQuickBarDistance: '距离 d',
+    mobileScrollTop: '回顶部',
+    mobileViewDerivations: '解题步骤',
   },
 };

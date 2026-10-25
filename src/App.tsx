@@ -18,6 +18,8 @@ import { ParamSolver } from './components/ParamSolver';
 import { SignTrapAlert } from './components/SignTrapAlert';
 import { PracticeQuiz } from './components/PracticeQuiz';
 import { FaqAndKeywords } from './components/FaqAndKeywords';
+import { RelatedCalculators } from './components/RelatedCalculators';
+import { InteractiveToolModal, ToolType } from './components/InteractiveToolModal';
 import { parseLinearEquation } from './utils/equationParser';
 import { translations, SupportedLanguage } from './i18n/translations';
 import {
@@ -88,6 +90,7 @@ export default function App() {
   // Modals & Panels
   const [showParamSolver, setShowParamSolver] = useState<boolean>(false);
   const [showQuiz, setShowQuiz] = useState<boolean>(false);
+  const [activeToolModal, setActiveToolModal] = useState<ToolType | null>(null);
   const [copiedAll, setCopiedAll] = useState<boolean>(false);
   const [shareToast, setShareToast] = useState<boolean>(false);
 
@@ -242,14 +245,23 @@ Relation: ${calcResult3D.message}`;
           </div>
 
           {/* Action buttons & Language Switcher */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Related Tools link (Visible on md+ screens) */}
+            <a
+              href="#related-calculators"
+              className="hidden md:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs sm:text-sm font-semibold text-slate-700 transition"
+            >
+              <Layers className="w-3.5 h-3.5 text-blue-600" />
+              <span>{t.relatedToolsNav}</span>
+            </a>
+
             {/* Language Selector */}
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs sm:text-sm font-semibold text-slate-800 transition">
-              <Globe className="w-4 h-4 text-blue-600 shrink-0" />
+            <div className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs sm:text-sm font-semibold text-slate-800 transition">
+              <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 shrink-0" />
               <select
                 value={lang}
                 onChange={(e) => setLang(e.target.value as SupportedLanguage)}
-                className="bg-transparent font-medium text-slate-800 focus:outline-none cursor-pointer pr-1"
+                className="bg-transparent font-medium text-slate-800 focus:outline-none cursor-pointer pr-0.5 text-xs sm:text-sm"
               >
                 <option value="en">English (Default)</option>
                 <option value="es">Español</option>
@@ -543,8 +555,8 @@ Relation: ${calcResult3D.message}`;
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2.5 pt-1">
-                        <div>
+                      <div className="grid grid-cols-3 gap-2 sm:gap-2.5 pt-1">
+                        <div className="min-w-0">
                           <label className="block text-xs font-bold text-slate-600 mb-1">
                             {t.coefA}
                           </label>
@@ -554,10 +566,10 @@ Relation: ${calcResult3D.message}`;
                             onChange={(e) =>
                               handleStandardChange({ ...l1, a: Number(e.target.value) || 0 }, l2)
                             }
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm sm:text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
+                            className="w-full min-h-[44px] px-2.5 sm:px-3 py-2 bg-white border border-slate-200 rounded-lg text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
                           />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <label className="block text-xs font-bold text-slate-600 mb-1">
                             {t.coefB}
                           </label>
@@ -567,10 +579,10 @@ Relation: ${calcResult3D.message}`;
                             onChange={(e) =>
                               handleStandardChange({ ...l1, b: Number(e.target.value) || 0 }, l2)
                             }
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm sm:text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
+                            className="w-full min-h-[44px] px-2.5 sm:px-3 py-2 bg-white border border-slate-200 rounded-lg text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
                           />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <label className="block text-xs font-bold text-slate-600 mb-1">
                             {t.constC}
                           </label>
@@ -580,7 +592,7 @@ Relation: ${calcResult3D.message}`;
                             onChange={(e) =>
                               handleStandardChange({ ...l1, c: Number(e.target.value) || 0 }, l2)
                             }
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm sm:text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
+                            className="w-full min-h-[44px] px-2.5 sm:px-3 py-2 bg-white border border-slate-200 rounded-lg text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
                           />
                         </div>
                       </div>
@@ -598,8 +610,8 @@ Relation: ${calcResult3D.message}`;
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2.5 pt-1">
-                        <div>
+                      <div className="grid grid-cols-3 gap-2 sm:gap-2.5 pt-1">
+                        <div className="min-w-0">
                           <label className="block text-xs font-bold text-slate-600 mb-1">
                             {t.coefA}
                           </label>
@@ -609,10 +621,10 @@ Relation: ${calcResult3D.message}`;
                             onChange={(e) =>
                               handleStandardChange(l1, { ...l2, a: Number(e.target.value) || 0 })
                             }
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm sm:text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
+                            className="w-full min-h-[44px] px-2.5 sm:px-3 py-2 bg-white border border-slate-200 rounded-lg text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
                           />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <label className="block text-xs font-bold text-slate-600 mb-1">
                             {t.coefB}
                           </label>
@@ -622,10 +634,10 @@ Relation: ${calcResult3D.message}`;
                             onChange={(e) =>
                               handleStandardChange(l1, { ...l2, b: Number(e.target.value) || 0 })
                             }
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm sm:text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
+                            className="w-full min-h-[44px] px-2.5 sm:px-3 py-2 bg-white border border-slate-200 rounded-lg text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
                           />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <label className="block text-xs font-bold text-slate-600 mb-1">
                             {t.constC}
                           </label>
@@ -635,7 +647,7 @@ Relation: ${calcResult3D.message}`;
                             onChange={(e) =>
                               handleStandardChange(l1, { ...l2, c: Number(e.target.value) || 0 })
                             }
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm sm:text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
+                            className="w-full min-h-[44px] px-2.5 sm:px-3 py-2 bg-white border border-slate-200 rounded-lg text-base text-slate-900 font-mono focus:outline-blue-500 font-semibold"
                           />
                         </div>
                       </div>
@@ -1037,7 +1049,7 @@ Relation: ${calcResult3D.message}`;
         )}
 
         {/* DETAILED STEPS SECTION (2D & 3D) */}
-        <section className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-5">
+        <section id="steps-section" className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-5">
           {/* Section Header */}
           <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200">
             <div>
@@ -1138,6 +1150,17 @@ Relation: ${calcResult3D.message}`;
           </div>
         </section>
 
+        {/* RELATED CALCULATORS DIRECT ENTRIES */}
+        <RelatedCalculators
+          t={t}
+          lang={lang}
+          onOpenTool={(tool) => setActiveToolModal(tool)}
+          onSwitchTo3D={() => {
+            setDimension('3D');
+            window.scrollTo({ top: 320, behavior: 'smooth' });
+          }}
+        />
+
         {/* FAQ & Theorem Reference Section */}
         <FaqAndKeywords t={t} lang={lang} />
       </main>
@@ -1146,6 +1169,58 @@ Relation: ${calcResult3D.message}`;
       <footer className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 text-center text-xs sm:text-sm text-slate-400">
         <p>{t.footerText}</p>
       </footer>
+
+      {/* Mobile Floating Sticky Quick Bar */}
+      <div className="sm:hidden fixed bottom-3 left-3 right-3 z-30 bg-white/95 backdrop-blur-md border border-slate-300/90 rounded-2xl shadow-xl px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2 truncate">
+          <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+            d
+          </div>
+          <div className="truncate">
+            <div className="text-[10px] text-slate-500 font-medium">
+              {dimension === '2D' ? (lang === 'zh' ? '两平行线间距' : '2D Distance') : (lang === 'zh' ? '空间线间距' : '3D Distance')}
+            </div>
+            <div className="font-extrabold text-slate-900 truncate font-mono text-sm">
+              {dimension === '2D'
+                ? `d ≈ ${calcResult2D.exactDistance.decimal.toFixed(3)}`
+                : `d ≈ ${calcResult3D.distance.decimal.toFixed(3)}`}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById('steps-section');
+              el?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg border border-blue-200 transition"
+          >
+            {t.mobileViewDerivations}
+          </button>
+          <a
+            href="#related-calculators"
+            className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg border border-slate-200 transition"
+          >
+            {t.relatedToolsNav}
+          </a>
+        </div>
+      </div>
+
+      {/* Interactive Companion Tool Modal */}
+      {activeToolModal && (
+        <InteractiveToolModal
+          toolType={activeToolModal}
+          onClose={() => setActiveToolModal(null)}
+          onSwitchTo3D={() => {
+            setDimension('3D');
+            window.scrollTo({ top: 320, behavior: 'smooth' });
+          }}
+          t={t}
+          lang={lang}
+        />
+      )}
     </div>
   );
 }

@@ -92,7 +92,7 @@ export const GeometryCanvas: React.FC<GeometryCanvasProps> = ({ l1, l2, calcResu
     return `M ${pA.x} ${pA.y} L ${pB.x} ${pB.y} L ${pC.x} ${pC.y}`;
   }, [pScreen, qScreen, calcResult]);
 
-  // Handle Dragging
+  // Handle Dragging (Mouse & Touch)
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
     setDragStart({ x: e.clientX - offset.x, y: e.clientY - offset.y });
@@ -107,6 +107,26 @@ export const GeometryCanvas: React.FC<GeometryCanvasProps> = ({ l1, l2, calcResu
   };
 
   const handleMouseUp = () => setIsDragging(false);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.touches[0].clientX - offset.x,
+        y: e.touches[0].clientY - offset.y,
+      });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    setOffset({
+      x: e.touches[0].clientX - dragStart.x,
+      y: e.touches[0].clientY - dragStart.y,
+    });
+  };
+
+  const handleTouchEnd = () => setIsDragging(false);
 
   const resetView = () => {
     setScale(36);
@@ -210,7 +230,11 @@ export const GeometryCanvas: React.FC<GeometryCanvasProps> = ({ l1, l2, calcResu
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        className="relative w-full h-[360px] md:h-[400px] bg-white rounded-lg overflow-hidden border border-slate-100 cursor-grab active:cursor-grabbing select-none"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
+        className="relative w-full h-[300px] sm:h-[360px] md:h-[400px] bg-white rounded-lg overflow-hidden border border-slate-100 cursor-grab active:cursor-grabbing select-none touch-none"
       >
         <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full">
           <defs>

@@ -15,10 +15,49 @@ export const GeometryCanvas3D: React.FC<GeometryCanvas3DProps> = ({ l1, l2, calc
   const [rotationAngle, setRotationAngle] = useState(35); // degrees
   const [elevation, setElevation] = useState(25); // degrees
 
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
   const width = 640;
   const height = 380;
   const cx = width / 2;
   const cy = height / 2 + 30;
+
+  // Mouse drag handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStart.x;
+    const dy = e.clientY - dragStart.y;
+    setRotationAngle((a) => (a + dx * 0.5 + 360) % 360);
+    setElevation((el) => Math.max(-60, Math.min(60, el + dy * 0.3)));
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseUp = () => setIsDragging(false);
+
+  // Touch drag handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    const dx = e.touches[0].clientX - dragStart.x;
+    const dy = e.touches[0].clientY - dragStart.y;
+    setRotationAngle((a) => (a + dx * 0.6 + 360) % 360);
+    setElevation((el) => Math.max(-60, Math.min(60, el + dy * 0.4)));
+    setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+  };
+
+  const handleTouchEnd = () => setIsDragging(false);
 
   // Isometric 3D to 2D projection
   const project3D = (x: number, y: number, z: number) => {
@@ -107,7 +146,17 @@ export const GeometryCanvas3D: React.FC<GeometryCanvas3DProps> = ({ l1, l2, calc
         </div>
       </div>
 
-      <div className="relative w-full h-[360px] bg-white rounded-lg overflow-hidden border border-slate-100 select-none">
+      <div
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
+        className="relative w-full h-[300px] sm:h-[360px] bg-white rounded-lg overflow-hidden border border-slate-100 select-none cursor-grab active:cursor-grabbing touch-none"
+      >
         <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full">
           <defs>
             <marker id="arrow3d" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
