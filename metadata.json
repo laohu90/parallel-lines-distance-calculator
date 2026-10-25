@@ -1,0 +1,6 @@
+{
+  "name": "Distance Between Parallel Lines Calculator",
+  "description": "Professional analytic geometry calculator for distance between parallel lines with step-by-step LaTeX derivations, completing-the-square proofs, dynamic coordinate visualizer, and multilingual support (EN, ES, FR, PT, ZH).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
