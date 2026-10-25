@@ -6,6 +6,16 @@ export interface TranslationDictionary {
   tagline: string;
   badge: string;
   
+  // 2D vs 3D Dimension toggle
+  dim2DTitle: string;
+  dim3DTitle: string;
+  dim3DDesc: string;
+  line3DP1: string;
+  line3DV1: string;
+  line3DP2: string;
+  line3DV2: string;
+  syncNotice: string;
+
   // Modes & Inputs
   inputSectionTitle: string;
   modeStandard: string;
@@ -33,6 +43,7 @@ export interface TranslationDictionary {
   statusStrictlyParallel: string;
   statusCoincident: string;
   statusIntersecting: string;
+  statusSkew: string;
 
   // Traps & Diagnostics
   trapRadarTitle: string;
@@ -126,15 +137,24 @@ export interface TranslationDictionary {
 
 export const translations: Record<SupportedLanguage, TranslationDictionary> = {
   en: {
-    appName: 'Distance Between Parallel Lines Calculator',
-    appSubtitle: 'Step-by-Step Derivation & Completing the Square Solver',
-    tagline: 'High-precision analytic geometry calculator with rigorous algebraic proofs, sign-error radar, and dynamic coordinate geometry.',
+    appName: 'Parallel Lines Distance Calculator',
+    appSubtitle: 'Step-by-Step Analytic Geometry Solver (2D Plane & 3D Space)',
+    tagline: 'High-precision analytic geometry calculator with rigorous algebraic proofs, completing the square, and 3D space skew/parallel line solutions.',
     badge: 'Analytic Geometry',
 
+    dim2DTitle: '2D Plane Lines',
+    dim3DTitle: '3D Space Lines (Parallel & Skew)',
+    dim3DDesc: 'Compute perpendicular distance between parallel lines or skew lines in 3-dimensional space using vector cross products.',
+    line3DP1: 'Point P₁ on Line 1 (x₁, y₁, z₁)',
+    line3DV1: 'Direction Vector v₁ (m₁, n₁, p₁)',
+    line3DP2: 'Point P₂ on Line 2 (x₂, y₂, z₂)',
+    line3DV2: 'Direction Vector v₂ (m₂, n₂, p₂)',
+    syncNotice: '✓ Formats auto-sync: values stay intact across all modes',
+
     inputSectionTitle: 'Line Equations Input',
-    modeStandard: 'Standard Form (Ax + By + C = 0)',
-    modeSlope: 'Slope-Intercept (y = mx + b)',
-    modeSmartParse: 'Smart Text Parser',
+    modeStandard: 'Standard: Ax+By+C=0',
+    modeSlope: 'Slope: y=mx+b',
+    modeSmartParse: 'Smart Parser',
     line1Title: 'Line 1 (l₁)',
     line2Title: 'Line 2 (l₂)',
     coefA: 'Coefficient A (x)',
@@ -145,8 +165,8 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
     interceptB2: 'l₂ Intercept (b₂)',
     parsePlaceholder: 'Type e.g. 3x - 4y + 5 = 0 or 2x + 3y = 8 or y = 3x - 4',
     parseTip: 'Smart parser automatically identifies linear equations in any standard algebraic format.',
-    parsedSuccess: 'Successfully parsed equation',
-    parseError: 'Unable to parse. Please use format like Ax + By + C = 0 or y = mx + b',
+    parsedSuccess: 'Parsed equation',
+    parseError: 'Unable to parse. Use format like Ax + By + C = 0 or y = mx + b',
 
     resultTitle: 'Calculated Perpendicular Distance',
     exactValueLabel: 'Exact Radical / Fraction Form',
@@ -156,16 +176,17 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
     statusStrictlyParallel: 'Parallel (Valid)',
     statusCoincident: 'Coincident Lines (d = 0)',
     statusIntersecting: 'Intersecting (d = 0)',
+    statusSkew: 'Skew Lines (Shortest Distance)',
 
     trapRadarTitle: 'Exam Sign & Scaling Trap Radar',
     trapCheckScaling: '1. Coefficient Homogenization Check',
-    trapCheckScalingTriggered: 'Warning: Coefficients are not aligned! l₂ is scaled by factor k. Formulas fail if you do not divide by k first!',
-    trapCheckScalingPassed: 'Passed: Coefficients of x and y are identical. Standard formula is directly applicable.',
+    trapCheckScalingTriggered: 'Warning: Coefficients are unaligned! l₂ is scaled by factor k. You must divide l₂ by k first!',
+    trapCheckScalingPassed: 'Passed: Coefficients of x and y are identical. Formula is directly applicable.',
     trapCheckSign: '2. Subtraction & Double Negative Check',
-    trapCheckSignTriggered: 'Caution: Constant term is negative. |C₁ - (-C₂)| becomes |C₁ + C₂| (two negatives make a positive).',
+    trapCheckSignTriggered: 'Caution: Constant term is negative. |C₁ - (-C₂)| becomes addition |C₁ + C₂|.',
     trapCheckSignPassed: 'Normal: Direct subtraction |C₁ - C₂| with absolute value ensuring non-negativity.',
     notParallelWarningTitle: 'Lines are NOT Parallel!',
-    notParallelWarningDesc: 'The normal vectors cross product is non-zero. The lines intersect at a single point. Intersecting lines do not have a constant parallel distance.',
+    notParallelWarningDesc: 'The normal vectors cross product is non-zero. The lines intersect at a single point (d = 0).',
 
     canvasTitle: 'Dynamic Geometry Visualizer',
     canvasSubtitle: 'Interactive cartesian plane with pan & zoom',
@@ -178,12 +199,12 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
 
     tabsTitle: 'Complete Step-by-Step Derivations',
     tabsSubtitle: 'Light-gray bordered cards highlighting every logical phase',
-    methodStandard: '1. Standard Formula (Unified Coefs)',
-    methodCompletingSquare: '2. Completing the Square Proof',
-    methodPointToLine: '3. Point-to-Line Reduction',
+    methodStandard: '1. Standard Formula',
+    methodCompletingSquare: '2. Completing Square',
+    methodPointToLine: '3. Point-to-Line',
     methodNormalVector: '4. Vector Projection',
-    methodStandardDesc: 'Official exam derivation: rigorously unifies coefficients before substituting into the distance formula, preventing lost negative signs.',
-    methodCompletingSquareDesc: 'Algebraic minimum proof: constructs the squared distance function of a moving point, completes the square to eliminate the linear term, and yields the absolute minimum.',
+    methodStandardDesc: 'Official exam derivation: unifies coefficients before substituting into the distance formula, preventing lost negative signs.',
+    methodCompletingSquareDesc: 'Algebraic minimum proof: constructs the squared distance function of a moving point and completes the square to yield the absolute minimum.',
     methodPointToLineDesc: 'Alternative reduction: picks a neat grid point on Line 1 and uses the point-to-line perpendicular distance formula.',
     methodNormalVectorDesc: 'Geometric vector approach: projects the displacement vector between lines onto the unit normal vector.',
     stepOf: 'Step',
@@ -278,14 +299,23 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
 
   es: {
     appName: 'Calculadora de Distancia Entre Rectas Paralelas',
-    appSubtitle: 'Resolución Paso a Paso y Método de Completar el Cuadrado',
-    tagline: 'Calculadora de geometría analítica con demostraciones algebraicas rigurosas, radar de signos y plano cartesiano dinámico.',
+    appSubtitle: 'Resolución Paso a Paso (Plano 2D y Espacio 3D)',
+    tagline: 'Calculadora de geometría analítica con demostraciones algebraicas rigurosas, radar de signos y rectas paralelas y alabeadas/cruzadas en 3D.',
     badge: 'Geometría Analítica',
 
+    dim2DTitle: 'Rectas en el Plano 2D',
+    dim3DTitle: 'Rectas en el Espacio 3D (Paralelas y Alabeadas)',
+    dim3DDesc: 'Calcula la distancia perpendicular entre rectas paralelas o rectas alabeadas (que se cruzan) en el espacio tridimensional.',
+    line3DP1: 'Punto P₁ en Recta 1 (x₁, y₁, z₁)',
+    line3DV1: 'Vector Director v₁ (m₁, n₁, p₁)',
+    line3DP2: 'Punto P₂ en Recta 2 (x₂, y₂, z₂)',
+    line3DV2: 'Vector Director v₂ (m₂, n₂, p₂)',
+    syncNotice: '✓ Sincronización automática: los valores se conservan entre formatos',
+
     inputSectionTitle: 'Entrada de Ecuaciones de Rectas',
-    modeStandard: 'Forma General (Ax + By + C = 0)',
-    modeSlope: 'Pendiente-Ordenada (y = mx + b)',
-    modeSmartParse: 'Analizador Inteligente de Texto',
+    modeStandard: 'General: Ax+By+C=0',
+    modeSlope: 'Pendiente: y=mx+b',
+    modeSmartParse: 'Analizador Rápido',
     line1Title: 'Recta 1 (l₁)',
     line2Title: 'Recta 2 (l₂)',
     coefA: 'Coeficiente A (x)',
@@ -307,6 +337,7 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
     statusStrictlyParallel: 'Paralelas (Válido)',
     statusCoincident: 'Rectas Coincidentes (d = 0)',
     statusIntersecting: 'Rectas Secantes (d = 0)',
+    statusSkew: 'Rectas Alabeadas / Cruzadas (Distancia Mínima)',
 
     trapRadarTitle: 'Radar de Trampas de Signos y Coeficientes',
     trapCheckScaling: '1. Comprobación de Homogeneización',
@@ -429,14 +460,23 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
 
   fr: {
     appName: 'Calculateur de Distance Entre Deux Droites Parallèles',
-    appSubtitle: 'Résolution Étape par Étape et Méthode de Complétion du Carré',
-    tagline: 'Calculateur de géométrie analytique haute précision avec preuves algébriques rigoureuses, détection des pièges de signe et repère dynamique.',
+    appSubtitle: 'Résolution Étape par Étape (Plan 2D & Espace 3D)',
+    tagline: 'Calculateur de géométrie analytique haute précision avec preuves algébriques rigoureuses, droites parallèles et gauches en 3D.',
     badge: 'Géométrie Analytique',
 
+    dim2DTitle: 'Droites du Plan 2D',
+    dim3DTitle: 'Droites de l\'Espace 3D (Parallèles & Gauches)',
+    dim3DDesc: 'Calcule la distance perpendiculaire entre droites parallèles ou droites non coplanaires (gauches) dans l\'espace 3D.',
+    line3DP1: 'Point P₁ sur la Droite 1 (x₁, y₁, z₁)',
+    line3DV1: 'Vecteur Directeur v₁ (m₁, n₁, p₁)',
+    line3DP2: 'Point P₂ sur la Droite 2 (x₂, y₂, z₂)',
+    line3DV2: 'Vecteur Directeur v₂ (m₂, n₂, p₂)',
+    syncNotice: '✓ Synchronisation automatique : les données sont conservées entre formats',
+
     inputSectionTitle: 'Saisie des Équations de Droites',
-    modeStandard: 'Forme Cartésienne (Ax + By + C = 0)',
-    modeSlope: 'Équation Réduite (y = mx + p)',
-    modeSmartParse: 'Analyseur de Texte Intelligent',
+    modeStandard: 'Cartésienne : Ax+By+C=0',
+    modeSlope: 'Réduite : y=mx+p',
+    modeSmartParse: 'Analyseur Rapide',
     line1Title: 'Droite 1 (d₁)',
     line2Title: 'Droite 2 (d₂)',
     coefA: 'Coefficient A (x)',
@@ -458,6 +498,7 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
     statusStrictlyParallel: 'Parallèles (Valide)',
     statusCoincident: 'Droites Confondues (d = 0)',
     statusIntersecting: 'Droites Sécantes (d = 0)',
+    statusSkew: 'Droites Gauches / Non Coplanaires (Distance Minimale)',
 
     trapRadarTitle: 'Radar Anti-Pièges de Signes et Coefficients',
     trapCheckScaling: '1. Vérification d\'Homogénéisation',
@@ -580,14 +621,23 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
 
   pt: {
     appName: 'Calculadora de Distância Entre Retas Paralelas',
-    appSubtitle: 'Resolução Passo a Passo e Método de Completar o Quadrado',
-    tagline: 'Calculadora de geometria analítica com demonstrações algébricas rigorosas, radar de sinais e plano cartesiano interativo.',
+    appSubtitle: 'Resolução Passo a Passo (Plano 2D & Espaço 3D)',
+    tagline: 'Calculadora de geometria analítica com demonstrações algébricas rigorosas, retas paralelas e reversas no espaço 3D.',
     badge: 'Geometria Analítica',
 
+    dim2DTitle: 'Retas no Plano 2D',
+    dim3DTitle: 'Retas no Espaço 3D (Paralelas & Reversas)',
+    dim3DDesc: 'Calcula a distância perpendicular entre retas paralelas ou retas reversas (não coplanares) no espaço tridimensional.',
+    line3DP1: 'Ponto P₁ na Reta 1 (x₁, y₁, z₁)',
+    line3DV1: 'Vetor Diretor v₁ (m₁, n₁, p₁)',
+    line3DP2: 'Ponto P₂ na Reta 2 (x₂, y₂, z₂)',
+    line3DV2: 'Vetor Diretor v₂ (m₂, n₂, p₂)',
+    syncNotice: '✓ Sincronização automática: os valores são preservados entre formatos',
+
     inputSectionTitle: 'Entrada de Equações de Retas',
-    modeStandard: 'Forma Geral (Ax + By + C = 0)',
-    modeSlope: 'Equação Reduzida (y = mx + q)',
-    modeSmartParse: 'Analisador Inteligente de Texto',
+    modeStandard: 'Geral: Ax+By+C=0',
+    modeSlope: 'Reduzida: y=mx+q',
+    modeSmartParse: 'Analisador Rápido',
     line1Title: 'Reta 1 (r₁)',
     line2Title: 'Reta 2 (r₂)',
     coefA: 'Coeficiente A (x)',
@@ -609,6 +659,7 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
     statusStrictlyParallel: 'Paralelas (Válido)',
     statusCoincident: 'Retas Coincidentes (d = 0)',
     statusIntersecting: 'Retas Concorrentes (d = 0)',
+    statusSkew: 'Retas Reversas / Não Coplanares (Distância Mínima)',
 
     trapRadarTitle: 'Radar de Armadilhas de Sinais e Coeficientes',
     trapCheckScaling: '1. Verificação de Homogeneização',
@@ -731,13 +782,22 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
 
   zh: {
     appName: '两平行直线间距离计算器',
-    appSubtitle: '详细解题步骤、配方法拆解与高二解析几何避坑',
-    tagline: '支持LaTeX公式逐步排版、系数同化拆解、函数配方法求最值及动态几何画板验证。',
-    badge: '高二解析几何专项',
+    appSubtitle: '详细解题步骤、配方法拆解与 2D/3D 空间直线距离',
+    tagline: '支持2D平面平行线及3D空间异面/平行直线距离求解、LaTeX公式逐步排版、函数配方法最值拆解。',
+    badge: '解析几何专项',
+
+    dim2DTitle: '2D 平面解析几何',
+    dim3DTitle: '3D 空间立体几何 (平行与异面直线)',
+    dim3DDesc: '精确计算三维空间中平行直线或异面直线的最短垂直公垂线距离与向量外积推导。',
+    line3DP1: '直线 L₁ 基准定点 P₁ (x₁, y₁, z₁)',
+    line3DV1: '直线 L₁ 方向向量 v₁ (m₁, n₁, p₁)',
+    line3DP2: '直线 L₂ 基准定点 P₂ (x₂, y₂, z₂)',
+    line3DV2: '直线 L₂ 方向向量 v₂ (m₂, n₂, p₂)',
+    syncNotice: '✓ 双向实时同步：切换一般式/斜截式/文本输入数据自动互转保留',
 
     inputSectionTitle: '输入两直线方程',
-    modeStandard: '一般式 (Ax + By + C = 0)',
-    modeSlope: '斜截式 (y = kx + b)',
+    modeStandard: '一般式：Ax+By+C=0',
+    modeSlope: '斜截式：y=kx+b',
     modeSmartParse: '智能文本解析',
     line1Title: '直线 1 (l₁)',
     line2Title: '直线 2 (l₂)',
@@ -760,6 +820,7 @@ export const translations: Record<SupportedLanguage, TranslationDictionary> = {
     statusStrictlyParallel: '严格平行 (有解)',
     statusCoincident: '两线重合 (d = 0)',
     statusIntersecting: '两线相交 (不适用)',
+    statusSkew: '空间异面直线 (公垂线段距离)',
 
     trapRadarTitle: '高二易错点防丢分自查雷达（符号与倍数诊断）',
     trapCheckScaling: '1. 系数同化检查',
