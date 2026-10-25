@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ais-pre-tpfcni6xu4egarxb6alxey-789584051341.asia-southeast1.run.app/sitemap.xml
+Sitemap: https://parallel-lines-distance-calculator.formulacalckit.com/sitemap.xml

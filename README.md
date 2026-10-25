@@ -2,7 +2,7 @@
 
 A high-performance, precision analytic geometry web application designed to compute and rigorously prove the perpendicular distance between two parallel lines. Built for high school, college students, and mathematics educators worldwide.
 
-> **Live Demo**: [https://ais-pre-tpfcni6xu4egarxb6alxey-789584051341.asia-southeast1.run.app/](https://ais-pre-tpfcni6xu4egarxb6alxey-789584051341.asia-southeast1.run.app/)
+> **Live Demo**: [https://parallel-lines-distance-calculator.formulacalckit.com](https://parallel-lines-distance-calculator.formulacalckit.com)
 
 ---
 
