@@ -274,18 +274,41 @@ export function calculateParallelDistance(
   const unifiedA = l1.a;
   const unifiedB = l1.b;
   const unifiedC1 = l1.c;
-  const unifiedC2Fraction = new Fraction(l2.c).div(kFrac);
+  const unifiedC2Fraction = Fraction.fromNumber(l2.c).div(kFrac);
 
-  const cDiffFraction = new Fraction(unifiedC1).sub(unifiedC2Fraction);
+  const cDiffFraction = Fraction.fromNumber(unifiedC1).sub(unifiedC2Fraction);
   const absDeltaC = cDiffFraction.abs();
+  const fracA = Fraction.fromNumber(unifiedA);
+  const fracB = Fraction.fromNumber(unifiedB);
+  const sumSqFrac = fracA.mul(fracA).add(fracB.mul(fracB));
   const sumSq = unifiedA * unifiedA + unifiedB * unifiedB;
-  const exactDistance = formatExactDistance(absDeltaC, sumSq);
+  const exactDistance = formatExactDistance(absDeltaC, sumSqFrac);
+  const dSq = absDeltaC.mul(absDeltaC).div(sumSqFrac);
 
   const sampleP = getSamplePoint(unifiedA, unifiedB, unifiedC1);
   const l2ValAtP = unifiedA * sampleP.x + unifiedB * sampleP.y + unifiedC2Fraction.toNumber();
   const qX = sampleP.x - (l2ValAtP * unifiedA) / sumSq;
   const qY = sampleP.y - (l2ValAtP * unifiedB) / sumSq;
   const closestQ = { x: qX, y: qY };
+
+  // Helper to format step 4 formula with step-by-step radical reduction
+  const step4Formula = (() => {
+    if (absDeltaC.isZero()) {
+      return `d = \\frac{0}{\\sqrt{${sumSq}}} = 0`;
+    }
+    if (sumSqFrac.den === 1) {
+      const sumSqInt = sumSqFrac.num;
+      const { outside, inside } = simplifySqrt(sumSqInt);
+      if (inside === 1) {
+        return `d = \\frac{${absDeltaC.toLatex()}}{\\sqrt{${sumSqInt}}} = \\frac{${absDeltaC.toLatex()}}{${outside}} = ${exactDistance.latex} \\approx ${exactDistance.decimal.toFixed(4)}`;
+      } else {
+        const denStr = outside === 1 ? `\\sqrt{${inside}}` : `${outside}\\sqrt{${inside}}`;
+        return `d = \\frac{${absDeltaC.toLatex()}}{\\sqrt{${sumSqInt}}} = \\frac{${absDeltaC.toLatex()}}{${denStr}} = ${exactDistance.latex} \\approx ${exactDistance.decimal.toFixed(4)}`;
+      }
+    } else {
+      return `d = \\frac{${absDeltaC.toLatex()}}{\\sqrt{${sumSq}}} = \\frac{${absDeltaC.toLatex()}}{\\sqrt{${sumSqFrac.toLatex()}}} = \\sqrt{${dSq.toLatex()}} = ${exactDistance.latex} \\approx ${exactDistance.decimal.toFixed(4)}`;
+    }
+  })();
 
   // ==========================================
   // METHOD 1: Standard Formula (Unified Coefficients)
@@ -334,7 +357,7 @@ export function calculateParallelDistance(
       title: st.std4Title,
       badgeText: st.std4Badge,
       description: st.std4Desc,
-      latexFormula: `d = \\frac{${absDeltaC.toLatex()}}{\\sqrt{${sumSq}}} = \\frac{${absDeltaC.toLatex()}}{${simplifySqrt(sumSq).outside === 1 ? `\\sqrt{${sumSq}}` : `${simplifySqrt(sumSq).outside}${simplifySqrt(sumSq).inside > 1 ? `\\sqrt{${simplifySqrt(sumSq).inside}}` : ''}`}} = ${exactDistance.latex} \\approx ${exactDistance.decimal.toFixed(4)}`,
+      latexFormula: step4Formula,
       keyTakeaway: st.std4Takeaway(exactDistance.latex, exactDistance.decimal),
     },
   ];

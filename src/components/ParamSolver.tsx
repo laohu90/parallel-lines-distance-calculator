@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MathView } from './MathView';
 import { AlertCircle, HelpCircle, ArrowRight } from 'lucide-react';
-import { simplifySqrt } from '../utils/fraction';
+import { Fraction, simplifyRadicalFraction } from '../utils/fraction';
 import { TranslationDictionary } from '../i18n/translations';
 
 interface ParamSolverProps {
@@ -14,21 +14,34 @@ export const ParamSolver: React.FC<ParamSolverProps> = ({ t }) => {
   const [c1, setC1] = useState<number>(-2);
   const [dist, setDist] = useState<number>(3);
 
+  const fracA = Fraction.fromNumber(a);
+  const fracB = Fraction.fromNumber(b);
+  const sumSqFrac = fracA.mul(fracA).add(fracB.mul(fracB));
   const sumSq = a * a + b * b;
   const sqrtSum = Math.sqrt(sumSq);
-  const { outside, inside } = simplifySqrt(sumSq);
+
+  const fracDist = Fraction.fromNumber(dist);
+  const rhsSq = fracDist.mul(fracDist).mul(sumSqFrac);
+  const rhsRadical = simplifyRadicalFraction(rhsSq);
 
   // |C1 - m| = dist * sqrt(A^2 + B^2)
   const rhsNum = dist * sqrtSum;
   const m1 = c1 + rhsNum;
   const m2 = c1 - rhsNum;
 
-  // Exact representation if sumSq is perfect square
-  const isPerfect = inside === 1;
-  const intRhs = dist * outside;
-
-  const m1Exact = isPerfect ? `${c1 + intRhs}` : `${c1} + ${dist * outside > 1 ? `${dist * outside}` : ''}\\sqrt{${inside}}`;
-  const m2Exact = isPerfect ? `${c1 - intRhs}` : `${c1} - ${dist * outside > 1 ? `${dist * outside}` : ''}\\sqrt{${inside}}`;
+  // Exact representation
+  const isRational = !rhsRadical.latex.includes('\\sqrt');
+  let m1Exact = '';
+  let m2Exact = '';
+  if (isRational) {
+    const fracC1 = Fraction.fromNumber(c1);
+    const fracRhs = Fraction.fromNumber(rhsNum);
+    m1Exact = fracC1.add(fracRhs).toLatex();
+    m2Exact = fracC1.sub(fracRhs).toLatex();
+  } else {
+    m1Exact = `${c1} + ${rhsRadical.latex}`;
+    m2Exact = `${c1} - ${rhsRadical.latex}`;
+  }
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
@@ -104,7 +117,7 @@ export const ParamSolver: React.FC<ParamSolverProps> = ({ t }) => {
           </div>
           <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-center">
             <MathView
-              math={`d = \\frac{|${c1} - m|}{\\sqrt{(${a})^2 + (${b})^2}} = ${dist} \\implies |${c1} - m| = ${dist} \\times \\sqrt{${sumSq}} = ${intRhs}${!isPerfect ? `\\sqrt{${inside}}` : ''}`}
+              math={`d = \\frac{|${c1} - m|}{\\sqrt{(${a})^2 + (${b})^2}} = ${dist} \\implies |${c1} - m| = ${dist} \\times \\sqrt{${sumSq}} = ${rhsRadical.latex}`}
             />
           </div>
 
@@ -113,7 +126,7 @@ export const ParamSolver: React.FC<ParamSolverProps> = ({ t }) => {
           </div>
           <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-center">
             <MathView
-              math={`${c1} - m = \\pm (${intRhs}${!isPerfect ? `\\sqrt{${inside}}` : ''}) \\implies m = ${c1} \\mp (${intRhs}${!isPerfect ? `\\sqrt{${inside}}` : ''})`}
+              math={`${c1} - m = \\pm (${rhsRadical.latex}) \\implies m = ${c1} \\mp (${rhsRadical.latex})`}
             />
           </div>
 
