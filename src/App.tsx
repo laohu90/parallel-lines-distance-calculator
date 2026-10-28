@@ -175,26 +175,38 @@ export default function App() {
   };
 
   // Copy full solution
+  const copyWithFallback = (textToCopy: string, onSuccess: () => void) => {
+    const fallback = () => {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = textToCopy;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        onSuccess();
+      } catch (err) {}
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textToCopy).then(onSuccess).catch(() => fallback());
+    } else {
+      fallback();
+    }
+  };
+
   const handleCopyFullSolution = () => {
     let text = '';
     if (dimension === '2D') {
-      text = `【${t.appName}】
-${t.line1Title}: ${formatLineLatex(l1.a, l1.b, l1.c)}
-${t.line2Title}: ${formatLineLatex(l2.a, l2.b, l2.c)}
-${t.resultTitle}: d = ${calcResult2D.exactDistance.latex} (≈ ${calcResult2D.exactDistance.decimal.toFixed(4)})
-${t.normalizedCoefficients}: A=${calcResult2D.unifiedA}, B=${calcResult2D.unifiedB}, C₁=${calcResult2D.unifiedC1}, C₂'=${calcResult2D.unifiedC2Fraction.toString()}
-${calcResult2D.check.message}`;
+      text = `[${t.appName}]\n${t.line1Title}: ${formatLineLatex(l1.a, l1.b, l1.c)}\n${t.line2Title}: ${formatLineLatex(l2.a, l2.b, l2.c)}\n${t.resultTitle}: d = ${calcResult2D.exactDistance.latex} (≈ ${calcResult2D.exactDistance.decimal.toFixed(4)})\n${t.normalizedCoefficients}: A=${calcResult2D.unifiedA}, B=${calcResult2D.unifiedB}, C₁=${calcResult2D.unifiedC1}, C₂'=${calcResult2D.unifiedC2Fraction.toString()}\n${calcResult2D.check.message}`;
     } else {
-      text = `【${t.appName} (3D Space)】
-Line 1: P₁(${l1_3d.p.x}, ${l1_3d.p.y}, ${l1_3d.p.z}) + t·(${l1_3d.v.x}, ${l1_3d.v.y}, ${l1_3d.v.z})
-Line 2: P₂(${l2_3d.p.x}, ${l2_3d.p.y}, ${l2_3d.p.z}) + s·(${l2_3d.v.x}, ${l2_3d.v.y}, ${l2_3d.v.z})
-Distance: d ≈ ${calcResult3D.distance.decimal.toFixed(4)}
-Relation: ${calcResult3D.message}`;
+      text = `[${t.appName} (3D Space)]\nLine 1: P₁(${l1_3d.p.x}, ${l1_3d.p.y}, ${l1_3d.p.z}) + t·(${l1_3d.v.x}, ${l1_3d.v.y}, ${l1_3d.v.z})\nLine 2: P₂(${l2_3d.p.x}, ${l2_3d.p.y}, ${l2_3d.p.z}) + s·(${l2_3d.v.x}, ${l2_3d.v.y}, ${l2_3d.v.z})\nDistance: d ≈ ${calcResult3D.distance.decimal.toFixed(4)}\nRelation: ${calcResult3D.message}`;
     }
 
-    navigator.clipboard.writeText(text);
-    setCopiedAll(true);
-    setTimeout(() => setCopiedAll(false), 2000);
+    copyWithFallback(text, () => {
+      setCopiedAll(true);
+      setTimeout(() => setCopiedAll(false), 2000);
+    });
   };
 
   // URL hash sync on mount
@@ -231,9 +243,10 @@ Relation: ${calcResult3D.message}`;
     const hash = `#a1=${l1.a}&b1=${l1.b}&c1=${l1.c}&a2=${l2.a}&b2=${l2.b}&c2=${l2.c}&dim=${dimension}&lang=${lang}`;
     window.location.hash = hash;
     const url = window.location.origin + window.location.pathname + hash;
-    navigator.clipboard.writeText(url);
-    setShareToast(true);
-    setTimeout(() => setShareToast(false), 2500);
+    copyWithFallback(url, () => {
+      setShareToast(true);
+      setTimeout(() => setShareToast(false), 2500);
+    });
   };
 
   const currentSteps2D = useMemo(() => {

@@ -14,10 +14,31 @@ export const StepCard: React.FC<StepCardProps> = ({ step, totalSteps, t }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    const textToCopy = `【${step.title}】\n${step.description}\n${t?.latexDerivation || 'Formula'}: ${step.latexFormula}\n${t?.coreConclusion || 'Takeaway'}: ${step.keyTakeaway}`;
-    navigator.clipboard.writeText(textToCopy);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    const textToCopy = `[${step.title}]\n${step.description}\n${t?.latexDerivation || 'Formula'}: ${step.latexFormula}\n${t?.coreConclusion || 'Takeaway'}: ${step.keyTakeaway}`;
+    
+    const fallbackCopy = () => {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = textToCopy;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {}
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch(() => {
+        fallbackCopy();
+      });
+    } else {
+      fallbackCopy();
+    }
   };
 
   return (

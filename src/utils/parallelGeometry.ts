@@ -387,7 +387,7 @@ export function calculateParallelDistance(
       title: st.sq2Title,
       badgeText: st.sq2Badge,
       description: st.sq2Desc,
-      latexFormula: `S(x) = (x - ${x0})^2 + \\left[\\left(-\\frac{${unifiedA}}{${unifiedB}}x - \\frac{${unifiedC2Fraction.toLatex()}}{${unifiedB}}\\right) - (${y0})\\right]^2`,
+      latexFormula: `S(x) = (x - (${x0}))^2 + \\left(\\frac{${unifiedA}x + ${unifiedB}y + ${unifiedC2Fraction.toLatex()}}{B}\\right)^2`,
       keyTakeaway: st.sq2Takeaway,
     });
 
@@ -397,7 +397,7 @@ export function calculateParallelDistance(
       title: st.sq3Title,
       badgeText: st.sq3Badge,
       description: st.sq3Desc(x0),
-      latexFormula: `S(u) = \\frac{A^2 + B^2}{B^2} u^2 + \\frac{2A(${deltaNum.toLatex()})}{B^2} u + \\left(\\frac{${deltaNum.toLatex()}}{${unifiedB}}\\right)^2 = \\frac{${sumSq}}{${unifiedB * unifiedB}} u^2 + \\dots`,
+      latexFormula: `S(u) = \\frac{A^2 + B^2}{B^2} u^2 + \\frac{2A(${deltaNum.toLatex()})}{B^2} u + \\frac{(${deltaNum.toLatex()})^2}{B^2} = \\frac{${sumSq}}{${unifiedB * unifiedB}} u^2 + \\frac{2(${unifiedA})(${deltaNum.toLatex()})}{${unifiedB * unifiedB}} u + \\frac{(${deltaNum.toLatex()})^2}{${unifiedB * unifiedB}}`,
       keyTakeaway: st.sq3Takeaway(sumSq, unifiedB * unifiedB),
     });
 

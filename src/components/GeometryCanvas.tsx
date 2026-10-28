@@ -421,7 +421,7 @@ export const GeometryCanvas: React.FC<GeometryCanvasProps> = ({ l1, l2, calcResu
                   <>
                     <circle cx={s.x} cy={s.y} r="5" fill="#dc2626" stroke="#ffffff" strokeWidth="2" />
                     <text x={s.x + 8} y={s.y - 6} fontSize="11" fill="#dc2626" fontWeight="bold">
-                      交点({calcResult.check.intersectionPoint.x.toFixed(2)},{' '}
+                      {t?.statusIntersecting || 'Intersection'}({calcResult.check.intersectionPoint.x.toFixed(2)},{' '}
                       {calcResult.check.intersectionPoint.y.toFixed(2)})
                     </text>
                   </>
@@ -444,7 +444,7 @@ export const GeometryCanvas: React.FC<GeometryCanvasProps> = ({ l1, l2, calcResu
           {calcResult.check.isParallel && (
             <div className="flex items-center gap-1.5 pt-0.5 border-t border-slate-100 text-rose-600 font-semibold">
               <span className="w-3 h-0.5 border-b-2 border-dashed border-rose-500 inline-block" />
-              <span>垂直间距 d ≈ {calcResult.exactDistance.decimal.toFixed(4)}</span>
+              <span>{t?.canvasPerpDist || 'Perpendicular Distance'} d ≈ {calcResult.exactDistance.decimal.toFixed(4)}</span>
             </div>
           )}
         </div>
