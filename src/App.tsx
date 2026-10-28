@@ -200,60 +200,6 @@ export default function App() {
     }
   };
 
-  const handleCopyFullSolution = () => {
-    let text = '';
-    if (dimension === '2D') {
-      text = `[${t.appName}]\n${t.line1Title}: ${formatLineLatex(l1.a, l1.b, l1.c)}\n${t.line2Title}: ${formatLineLatex(l2.a, l2.b, l2.c)}\n${t.resultTitle}: d = ${calcResult2D.exactDistance.latex} (≈ ${calcResult2D.exactDistance.decimal.toFixed(4)})\n${t.normalizedCoefficients}: A=${calcResult2D.unifiedA}, B=${calcResult2D.unifiedB}, C₁=${calcResult2D.unifiedC1}, C₂'=${calcResult2D.unifiedC2Fraction.toString()}\n${calcResult2D.check.message}`;
-    } else {
-      text = `[${t.appName} (3D Space)]\nLine 1: P₁(${l1_3d.p.x}, ${l1_3d.p.y}, ${l1_3d.p.z}) + t·(${l1_3d.v.x}, ${l1_3d.v.y}, ${l1_3d.v.z})\nLine 2: P₂(${l2_3d.p.x}, ${l2_3d.p.y}, ${l2_3d.p.z}) + s·(${l2_3d.v.x}, ${l2_3d.v.y}, ${l2_3d.v.z})\nDistance: d ≈ ${calcResult3D.distance.decimal.toFixed(4)}\nRelation: ${calcResult3D.message}`;
-    }
-
-    copyWithFallback(text, () => {
-      setCopiedAll(true);
-      setTimeout(() => setCopiedAll(false), 2000);
-    });
-  };
-
-  // URL hash sync on mount
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash && hash.includes('a1=')) {
-      const params = new URLSearchParams(hash.replace('#', ''));
-      const a1 = Number(params.get('a1'));
-      const b1 = Number(params.get('b1'));
-      const c1 = Number(params.get('c1'));
-      const a2 = Number(params.get('a2'));
-      const b2 = Number(params.get('b2'));
-      const c2 = Number(params.get('c2'));
-      const dim = params.get('dim');
-      const urlLang = params.get('lang');
-
-      if (!isNaN(a1) && !isNaN(b1) && !isNaN(c1) && !isNaN(a2) && !isNaN(b2) && !isNaN(c2)) {
-        setL1({ a: a1, b: b1, c: c1 });
-        setL2({ a: a2, b: b2, c: c2 });
-        setSmartTextL1(formatLineLatex(a1, b1, c1));
-        setSmartTextL2(formatLineLatex(a2, b2, c2));
-      }
-      if (dim === '2D' || dim === '3D') {
-        setDimension(dim);
-      }
-      if (urlLang && ['en', 'es', 'fr', 'pt', 'zh'].includes(urlLang)) {
-        setLang(urlLang as SupportedLanguage);
-      }
-    }
-  }, []);
-
-  // Share Problem URL
-  const handleShareProblem = () => {
-    const hash = `#a1=${l1.a}&b1=${l1.b}&c1=${l1.c}&a2=${l2.a}&b2=${l2.b}&c2=${l2.c}&dim=${dimension}&lang=${lang}`;
-    window.location.hash = hash;
-    const url = window.location.origin + window.location.pathname + hash;
-    copyWithFallback(url, () => {
-      setShareToast(true);
-      setTimeout(() => setShareToast(false), 2500);
-    });
-  };
-
   const currentSteps2D = useMemo(() => {
     switch (activeMethod) {
       case 'completingSquare':
@@ -267,6 +213,131 @@ export default function App() {
         return calcResult2D.steps.standardMethod;
     }
   }, [activeMethod, calcResult2D]);
+
+  const handleCopyFullSolution = () => {
+    let text = '';
+    if (dimension === '2D') {
+      const isInvalid = !calcResult2D.check.isLine1Valid || !calcResult2D.check.isLine2Valid;
+      const steps = currentSteps2D;
+      const stepsText = steps.length > 0
+        ? steps.map((s) =>
+            `[${t.stepOf || 'Step'} ${s.stepNumber}: ${s.title}]\n${s.description}\n${t.latexDerivation || 'Formula'}: ${s.latexFormula}\n${t.coreConclusion || 'Takeaway'}: ${s.keyTakeaway}`
+          ).join('\n\n')
+        : '';
+
+      const header = `[${t.appName}]\n` +
+        `${t.line1Title}: ${formatLineLatex(l1.a, l1.b, l1.c)}\n` +
+        `${t.line2Title}: ${formatLineLatex(l2.a, l2.b, l2.c)}\n` +
+        (isInvalid
+          ? `Status: ${lang === 'zh' ? '方程无效' : 'Invalid Equation'}\n${calcResult2D.check.message || ''}`
+          : `${t.resultTitle}: d = ${calcResult2D.exactDistance.latex} (≈ ${calcResult2D.exactDistance.decimal.toFixed(4)})\n` +
+            `${t.normalizedCoefficients}: A=${calcResult2D.unifiedA}, B=${calcResult2D.unifiedB}, C₁=${calcResult2D.unifiedC1}, C₂'=${calcResult2D.unifiedC2Fraction.toString()}\n` +
+            `${calcResult2D.check.message || ''}`);
+
+      text = stepsText ? `${header}\n\n--- ${t.tabsTitle || 'Derivation Steps'} ---\n\n${stepsText}` : header;
+    } else {
+      const steps = calcResult3D.steps;
+      const stepsText = steps.length > 0
+        ? steps.map((s) =>
+            `[${t.stepOf || 'Step'} ${s.stepNumber}: ${s.title}]\n${s.description}\n${t.latexDerivation || 'Formula'}: ${s.latexFormula}\n${t.coreConclusion || 'Takeaway'}: ${s.keyTakeaway}`
+          ).join('\n\n')
+        : '';
+
+      const header = `[${t.appName} (3D Space)]\n` +
+        `Line 1: P₁(${l1_3d.p.x}, ${l1_3d.p.y}, ${l1_3d.p.z}) + t·(${l1_3d.v.x}, ${l1_3d.v.y}, ${l1_3d.v.z})\n` +
+        `Line 2: P₂(${l2_3d.p.x}, ${l2_3d.p.y}, ${l2_3d.p.z}) + s·(${l2_3d.v.x}, ${l2_3d.v.y}, ${l2_3d.v.z})\n` +
+        `Distance: d = ${calcResult3D.distance.latex} (≈ ${calcResult3D.distance.decimal.toFixed(4)})\n` +
+        `Relation: ${calcResult3D.message}`;
+
+      text = stepsText ? `${header}\n\n--- ${lang === 'zh' ? '3D空间直线推导步骤' : '3D Spatial Derivation Steps'} ---\n\n${stepsText}` : header;
+    }
+
+    copyWithFallback(text, () => {
+      setCopiedAll(true);
+      setTimeout(() => setCopiedAll(false), 2000);
+    });
+  };
+
+  // URL hash sync on mount
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (!hash || hash.length <= 1) return;
+
+    try {
+      const params = new URLSearchParams(hash.replace('#', ''));
+      const urlLang = params.get('lang');
+      if (urlLang && ['en', 'es', 'fr', 'pt', 'zh'].includes(urlLang)) {
+        setLang(urlLang as SupportedLanguage);
+      }
+
+      const dim = params.get('dim');
+      if (dim === '3D' || params.has('p1x')) {
+        setDimension('3D');
+        if (params.has('p1x')) {
+          const p1x = Number(params.get('p1x'));
+          const p1y = Number(params.get('p1y'));
+          const p1z = Number(params.get('p1z'));
+          const v1x = Number(params.get('v1x'));
+          const v1y = Number(params.get('v1y'));
+          const v1z = Number(params.get('v1z'));
+
+          const p2x = Number(params.get('p2x'));
+          const p2y = Number(params.get('p2y'));
+          const p2z = Number(params.get('p2z'));
+          const v2x = Number(params.get('v2x'));
+          const v2y = Number(params.get('v2y'));
+          const v2z = Number(params.get('v2z'));
+
+          const allValid = [p1x, p1y, p1z, v1x, v1y, v1z, p2x, p2y, p2z, v2x, v2y, v2z].every((n) => !isNaN(n));
+          if (allValid) {
+            setL1_3d({
+              p: { x: p1x, y: p1y, z: p1z },
+              v: { x: v1x, y: v1y, z: v1z },
+            });
+            setL2_3d({
+              p: { x: p2x, y: p2y, z: p2z },
+              v: { x: v2x, y: v2y, z: v2z },
+            });
+          }
+        }
+      } else {
+        if (dim === '2D') {
+          setDimension('2D');
+        }
+        if (params.has('a1')) {
+          const a1 = Number(params.get('a1'));
+          const b1 = Number(params.get('b1'));
+          const c1 = Number(params.get('c1'));
+          const a2 = Number(params.get('a2'));
+          const b2 = Number(params.get('b2'));
+          const c2 = Number(params.get('c2'));
+
+          if (![a1, b1, c1, a2, b2, c2].some(isNaN)) {
+            setL1({ a: a1, b: b1, c: c1 });
+            setL2({ a: a2, b: b2, c: c2 });
+            setSmartTextL1(formatLineLatex(a1, b1, c1));
+            setSmartTextL2(formatLineLatex(a2, b2, c2));
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to parse URL hash parameters', e);
+    }
+  }, []);
+
+  // Share Problem URL
+  const handleShareProblem = () => {
+    const hash =
+      dimension === '3D'
+        ? `#dim=3D&p1x=${l1_3d.p.x}&p1y=${l1_3d.p.y}&p1z=${l1_3d.p.z}&v1x=${l1_3d.v.x}&v1y=${l1_3d.v.y}&v1z=${l1_3d.v.z}&p2x=${l2_3d.p.x}&p2y=${l2_3d.p.y}&p2z=${l2_3d.p.z}&v2x=${l2_3d.v.x}&v2y=${l2_3d.v.y}&v2z=${l2_3d.v.z}&lang=${lang}`
+        : `#dim=2D&a1=${l1.a}&b1=${l1.b}&c1=${l1.c}&a2=${l2.a}&b2=${l2.b}&c2=${l2.c}&lang=${lang}`;
+    window.location.hash = hash;
+    const url = window.location.origin + window.location.pathname + hash;
+    copyWithFallback(url, () => {
+      setShareToast(true);
+      setTimeout(() => setShareToast(false), 2500);
+    });
+  };
 
   return (
     <div className="min-h-screen bg-white text-slate-800 antialiased selection:bg-blue-100 selection:text-blue-900 pb-20 text-[15px] sm:text-base leading-relaxed">
