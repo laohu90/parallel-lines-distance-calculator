@@ -432,15 +432,64 @@ export function calculateParallelDistance(
       keyTakeaway: st.sq1Takeaway(x0, y0),
     });
 
+    // For moving point Q(x, y) on l2:
+    // Q in l2 => Ax + By + C2' = 0 => y = -(Ax + C2') / B
+    // y - y0 = -(Ax + C2' + B*y0) / B
+    // (y - y0)^2 = ((Ax + K) / |B|)^2 where K = C2' + B*y0
+    const absB = Math.abs(unifiedB);
+    const by0Frac = Fraction.fromNumber(unifiedB * y0);
+    const constK = unifiedC2Fraction.add(by0Frac); // C2' + B*y0
+
+    let xPart = '';
+    if (x0 === 0) xPart = 'x';
+    else if (x0 > 0) xPart = `x - ${x0}`;
+    else xPart = `x + ${Math.abs(x0)}`;
+
+    let numPart = '';
+    if (unifiedA === 1) numPart = 'x';
+    else if (unifiedA === -1) numPart = '-x';
+    else numPart = `${unifiedA}x`;
+
+    if (!constK.isZero()) {
+      if (constK.toNumber() > 0) {
+        numPart += ` + ${constK.toLatex()}`;
+      } else {
+        numPart += ` - ${constK.abs().toLatex()}`;
+      }
+    }
+
+    const yPartLatex = absB === 1 ? `(${numPart})` : `\\left(\\frac{${numPart}}{${absB}}\\right)`;
+
     completingSquareMethod.push({
       id: 'sq-2',
       stepNumber: 2,
       title: st.sq2Title,
       badgeText: st.sq2Badge,
       description: st.sq2Desc,
-      latexFormula: `S(x) = (x - (${x0}))^2 + \\left(\\frac{${unifiedA}x + ${unifiedB}y + ${unifiedC2Fraction.toLatex()}}{B}\\right)^2`,
+      latexFormula: `S(x) = (${xPart})^2 + ${yPartLatex}^2`,
       keyTakeaway: st.sq2Takeaway,
     });
+
+    const bSq = unifiedB * unifiedB;
+    const leadFrac = new Fraction(sumSq, bSq);
+    const midFrac = new Fraction(2 * unifiedA, bSq).mul(deltaNum);
+    const constFrac = deltaNum.mul(deltaNum).div(new Fraction(bSq, 1));
+
+    let step3Formula = `S(u) = \\frac{A^2 + B^2}{B^2} u^2 + \\frac{2A(${deltaNum.toLatex()})}{B^2} u + \\frac{(${deltaNum.toLatex()})^2}{B^2} = ${leadFrac.toLatex()} u^2`;
+    if (!midFrac.isZero()) {
+      if (midFrac.toNumber() > 0) {
+        step3Formula += ` + ${midFrac.toLatex()} u`;
+      } else {
+        step3Formula += ` - ${midFrac.abs().toLatex()} u`;
+      }
+    }
+    if (!constFrac.isZero()) {
+      if (constFrac.toNumber() > 0) {
+        step3Formula += ` + ${constFrac.toLatex()}`;
+      } else {
+        step3Formula += ` - ${constFrac.abs().toLatex()}`;
+      }
+    }
 
     completingSquareMethod.push({
       id: 'sq-3',
@@ -448,7 +497,7 @@ export function calculateParallelDistance(
       title: st.sq3Title,
       badgeText: st.sq3Badge,
       description: st.sq3Desc(x0),
-      latexFormula: `S(u) = \\frac{A^2 + B^2}{B^2} u^2 + \\frac{2A(${deltaNum.toLatex()})}{B^2} u + \\frac{(${deltaNum.toLatex()})^2}{B^2} = \\frac{${sumSq}}{${unifiedB * unifiedB}} u^2 + \\frac{2(${unifiedA})(${deltaNum.toLatex()})}{${unifiedB * unifiedB}} u + \\frac{(${deltaNum.toLatex()})^2}{${unifiedB * unifiedB}}`,
+      latexFormula: step3Formula,
       keyTakeaway: st.sq3Takeaway(sumSq, unifiedB * unifiedB),
     });
 
