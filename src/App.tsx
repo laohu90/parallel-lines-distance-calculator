@@ -42,13 +42,7 @@ import {
 
 export default function App() {
   // Language state (default English)
-  const [lang, setLang] = useState<SupportedLanguage>(() => {
-    const saved = localStorage.getItem('app_lang');
-    if (saved && ['en', 'es', 'fr', 'pt', 'zh'].includes(saved)) {
-      return saved as SupportedLanguage;
-    }
-    return 'en';
-  });
+  const [lang, setLang] = useState<SupportedLanguage>('en');
 
   const t = translations[lang] || translations.en;
 

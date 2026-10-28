@@ -62,20 +62,21 @@ export interface CalculationResult {
  * Checks if two lines are parallel and valid
  */
 export function analyzeParallelism(l1: LineEquation, l2: LineEquation, lang: SupportedLanguage = 'en'): ParallelCheckResult {
-  const isLine1Valid = !(l1.a === 0 && l1.b === 0);
-  const isLine2Valid = !(l2.a === 0 && l2.b === 0);
+  const isLine1Valid = !(Math.abs(l1.a) < 1e-9 && Math.abs(l1.b) < 1e-9);
+  const isLine2Valid = !(Math.abs(l2.a) < 1e-9 && Math.abs(l2.b) < 1e-9);
 
   if (!isLine1Valid || !isLine2Valid) {
+    const invalidName = !isLine1Valid ? (lang === 'zh' ? '直线 1 (l₁)' : 'Line 1') : (lang === 'zh' ? '直线 2 (l₂)' : 'Line 2');
     const msg =
       lang === 'zh'
-        ? '直线方程中 x 和 y 的系数不能同时为 0！'
+        ? `【方程无效错误】${invalidName} 的 x 和 y 系数不能同时为 0（这并不是一条直线，方程无意义）！`
         : lang === 'es'
-        ? '¡Los coeficientes de x e y no pueden ser ambos cero!'
+        ? `¡Ecuación no válida! Los coeficientes A y B de ${invalidName} no pueden ser ambos cero.`
         : lang === 'fr'
-        ? 'Les coefficients de x et y ne peuvent pas être tous les deux nuls !'
+        ? `Équation invalide ! Les coefficients de ${invalidName} ne peuvent pas être tous les deux nuls.`
         : lang === 'pt'
-        ? 'Os coeficientes de x e y não podem ser ambos nulos!'
-        : 'Coefficients of x and y cannot both be zero!';
+        ? `Equação inválida! Os coeficientes de ${invalidName} não podem ser ambos nulos.`
+        : `Invalid Equation Error: Coefficients A and B of ${invalidName} cannot both be zero! This is not a line.`;
 
     return {
       isLine1Valid,
@@ -243,8 +244,8 @@ export function calculateParallelDistance(
   const check = analyzeParallelism(l1, l2, lang);
   const st = STEP_TEXTS[lang] || STEP_TEXTS.en;
 
-  // If invalid or not parallel, return baseline
-  if (!check.isParallel || !check.isLine1Valid || !check.isLine2Valid) {
+  // If invalid equation
+  if (!check.isLine1Valid || !check.isLine2Valid) {
     const defaultDist = formatExactDistance(new Fraction(0), 1);
     return {
       check,
@@ -256,11 +257,56 @@ export function calculateParallelDistance(
       unifiedC2Fraction: new Fraction(l2.c),
       cDiffFraction: new Fraction(0),
       sumSq: 1,
-      exactDistance: defaultDist,
+      exactDistance: { latex: '\\text{Undefined}', decimal: 0, simplifiedNum: '0', simplifiedDen: '1' },
       samplePointL1: { x: 0, y: 0 },
       closestPointL2: { x: 0, y: 0 },
       steps: {
-        standardMethod: [],
+        standardMethod: [
+          {
+            id: 'inv-1',
+            stepNumber: 1,
+            title: lang === 'zh' ? '方程有效性检验失败（非直线）' : 'Equation Validity Check Failed',
+            badgeText: lang === 'zh' ? '方程无效' : 'Invalid Equation',
+            description: check.message || 'Equation is invalid',
+            latexFormula: 'A = 0 \\text{ and } B = 0 \\implies \\text{Not a line}',
+            keyTakeaway: lang === 'zh' ? '一次方程 Ax + By + C = 0 中系数 A 和 B 不能同时为 0。' : 'Coefficients A and B in linear equation cannot both be zero.',
+          },
+        ],
+        completingSquareMethod: [],
+        pointToLineMethod: [],
+        normalVectorMethod: [],
+      },
+    };
+  }
+
+  // If not parallel
+  if (!check.isParallel) {
+    const defaultDist = formatExactDistance(new Fraction(0), 1);
+    return {
+      check,
+      normalizedLine1: { A: l1.a, B: l1.b, C: l1.c },
+      normalizedLine2: { A: l2.a, B: l2.b, C: new Fraction(l2.c) },
+      unifiedA: l1.a,
+      unifiedB: l1.b,
+      unifiedC1: l1.c,
+      unifiedC2Fraction: new Fraction(l2.c),
+      cDiffFraction: new Fraction(0),
+      sumSq: l1.a * l1.a + l1.b * l1.b,
+      exactDistance: defaultDist,
+      samplePointL1: getSamplePoint(l1.a, l1.b, l1.c),
+      closestPointL2: { x: 0, y: 0 },
+      steps: {
+        standardMethod: [
+          {
+            id: 'not-par-1',
+            stepNumber: 1,
+            title: lang === 'zh' ? '检验直线平行性失败' : 'Parallelism Check Failed',
+            badgeText: lang === 'zh' ? '相交直线' : 'Intersecting',
+            description: check.message || 'Lines are not parallel',
+            latexFormula: `A_1 B_2 - A_2 B_1 = (${l1.a})(${l2.b}) - (${l2.a})(${l1.b}) = ${l1.a * l2.b - l2.a * l1.b} \\neq 0`,
+            keyTakeaway: lang === 'zh' ? '两直线不平行，在平面上相交于一点，不存在固定的平行线距离。' : 'Lines are not parallel; they intersect at a single point.',
+          },
+        ],
         completingSquareMethod: [],
         pointToLineMethod: [],
         normalVectorMethod: [],
