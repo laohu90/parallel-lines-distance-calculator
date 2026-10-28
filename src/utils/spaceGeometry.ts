@@ -1,4 +1,4 @@
-import { Fraction, gcd, simplifySqrt, formatExactDistance } from './fraction';
+import { Fraction, gcd, simplifySqrt, formatExactDistance, simplifyRadicalFraction } from './fraction';
 import { SupportedLanguage } from '../i18n/translations';
 
 export interface Point3D {
