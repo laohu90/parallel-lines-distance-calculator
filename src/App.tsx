@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, lazy, Suspense } from 'react';
 import {
   LineEquation,
   calculateParallelDistance,
@@ -13,15 +13,26 @@ import {
 import { MathView } from './components/MathView';
 import { StepCard } from './components/StepCard';
 import { GeometryCanvas } from './components/GeometryCanvas';
-import { GeometryCanvas3D } from './components/GeometryCanvas3D';
-import { ParamSolver } from './components/ParamSolver';
 import { SignTrapAlert } from './components/SignTrapAlert';
-import { PracticeQuiz } from './components/PracticeQuiz';
 import { FaqAndKeywords } from './components/FaqAndKeywords';
 import { RelatedCalculators } from './components/RelatedCalculators';
-import { InteractiveToolModal, ToolType } from './components/InteractiveToolModal';
+import type { ToolType } from './components/InteractiveToolModal';
 import { parseLinearEquation } from './utils/equationParser';
 import { translations, SupportedLanguage } from './i18n/translations';
+
+// Lazy load heavy or deferred components to dramatically speed up initial FCP
+const GeometryCanvas3D = lazy(() =>
+  import('./components/GeometryCanvas3D').then((m) => ({ default: m.GeometryCanvas3D }))
+);
+const ParamSolver = lazy(() =>
+  import('./components/ParamSolver').then((m) => ({ default: m.ParamSolver }))
+);
+const PracticeQuiz = lazy(() =>
+  import('./components/PracticeQuiz').then((m) => ({ default: m.PracticeQuiz }))
+);
+const InteractiveToolModal = lazy(() =>
+  import('./components/InteractiveToolModal').then((m) => ({ default: m.InteractiveToolModal }))
+);
 import {
   Calculator,
   Compass,
@@ -391,14 +402,18 @@ export default function App() {
         {/* Practice Quiz Panel (Collapsible) */}
         {showQuiz && (
           <section className="transition">
-            <PracticeQuiz t={t} onLoadQuestion={handleLoadQuizQuestion} />
+            <Suspense fallback={<div className="p-8 text-center text-slate-400 bg-white border border-slate-200 rounded-xl">Loading Quiz...</div>}>
+              <PracticeQuiz t={t} onLoadQuestion={handleLoadQuizQuestion} />
+            </Suspense>
           </section>
         )}
 
         {/* Inverse Parameter Solver Panel (Collapsible) */}
         {showParamSolver && (
           <section className="transition">
-            <ParamSolver t={t} />
+            <Suspense fallback={<div className="p-8 text-center text-slate-400 bg-white border border-slate-200 rounded-xl">Loading Solver...</div>}>
+              <ParamSolver t={t} />
+            </Suspense>
           </section>
         )}
 
@@ -1084,7 +1099,9 @@ export default function App() {
 
             {/* Right Column: 3D Isometric Canvas */}
             <div className="lg:col-span-6 space-y-6">
-              <GeometryCanvas3D l1={l1_3d} l2={l2_3d} calcResult={calcResult3D} t={t} />
+              <Suspense fallback={<div className="h-96 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 font-medium">Loading 3D Visualizer...</div>}>
+                <GeometryCanvas3D l1={l1_3d} l2={l2_3d} calcResult={calcResult3D} t={t} />
+              </Suspense>
             </div>
           </div>
         )}
@@ -1251,16 +1268,18 @@ export default function App() {
 
       {/* Interactive Companion Tool Modal */}
       {activeToolModal && (
-        <InteractiveToolModal
-          toolType={activeToolModal}
-          onClose={() => setActiveToolModal(null)}
-          onSwitchTo3D={() => {
-            setDimension('3D');
-            window.scrollTo({ top: 320, behavior: 'smooth' });
-          }}
-          t={t}
-          lang={lang}
-        />
+        <Suspense fallback={null}>
+          <InteractiveToolModal
+            toolType={activeToolModal}
+            onClose={() => setActiveToolModal(null)}
+            onSwitchTo3D={() => {
+              setDimension('3D');
+              window.scrollTo({ top: 320, behavior: 'smooth' });
+            }}
+            t={t}
+            lang={lang}
+          />
+        </Suspense>
       )}
     </div>
   );

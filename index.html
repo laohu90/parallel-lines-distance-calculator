@@ -42,8 +42,7 @@
       content="Calculate the perpendicular distance between parallel lines step-by-step with LaTeX formulas, completing-the-square proofs, and interactive coordinate plane."
     />
 
-    <!-- KaTeX CSS for LaTeX Math rendering -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+    <!-- KaTeX local bundle is included via src/index.css for hermetic fast loading -->
 
     <!-- Schema.org JSON-LD: WebApplication -->
     <script type="application/ld+json">
@@ -112,7 +111,43 @@
     </script>
   </head>
   <body class="bg-white text-slate-800 antialiased selection:bg-blue-100 selection:text-blue-900">
-    <div id="root"></div>
+    <div id="root">
+      <!-- Instant Pre-Rendered Skeleton Shell for Sub-Second FCP -->
+      <div style="min-height: 100vh; background: #ffffff; color: #1e293b; font-family: system-ui, -apple-system, sans-serif;">
+        <header style="border-bottom: 1px solid #e2e8f0; background: #ffffff; height: 72px; display: flex; align-items: center; padding: 0 24px;">
+          <div style="max-width: 1152px; width: 100%; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 42px; height: 42px; border-radius: 12px; background: #2563eb; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px;">
+                d
+              </div>
+              <div>
+                <div style="font-weight: 800; font-size: 18px; color: #0f172a; letter-spacing: -0.02em;">Parallel Lines Distance Calculator</div>
+                <div style="font-size: 13px; color: #64748b;">Step-by-Step Analytic Geometry Solver (2D Plane &amp; 3D Space)</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <div style="height: 36px; width: 100px; background: #f1f5f9; border-radius: 8px;"></div>
+            </div>
+          </div>
+        </header>
+        <main style="max-width: 1152px; margin: 24px auto; padding: 0 24px;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px; display: flex; gap: 8px; margin-bottom: 24px;">
+            <div style="height: 38px; width: 140px; background: #2563eb; border-radius: 12px;"></div>
+            <div style="height: 38px; width: 200px; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; height: 380px; padding: 24px;">
+              <div style="height: 24px; width: 180px; background: #f1f5f9; border-radius: 6px; margin-bottom: 16px;"></div>
+              <div style="height: 80px; background: #f8fafc; border-radius: 8px; margin-bottom: 16px;"></div>
+              <div style="height: 80px; background: #f8fafc; border-radius: 8px;"></div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; height: 380px; padding: 24px; display: flex; align-items: center; justify-content: center;">
+              <div style="text-align: center; color: #94a3b8; font-size: 14px;">Loading Interactive Geometry Board...</div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
