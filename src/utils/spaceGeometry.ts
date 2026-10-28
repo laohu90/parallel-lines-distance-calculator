@@ -126,10 +126,12 @@ export function calculateSpaceDistance(
       distLatex = '0';
     } else {
       relation = 'parallel';
-      distDecimal = numMag / v1Norm;
-      const denSq = v1Norm * v1Norm;
-      const exact = formatExactDistance(numMag, denSq);
+      const numSq = pCrossV1.x * pCrossV1.x + pCrossV1.y * pCrossV1.y + pCrossV1.z * pCrossV1.z;
+      const denSq = Math.round(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
+      const dSq = new Fraction(numSq, denSq);
+      const exact = simplifyRadicalFraction(dSq);
       distLatex = exact.latex;
+      distDecimal = exact.decimal;
     }
 
     // Step 1: Parallel Check
@@ -208,9 +210,12 @@ export function calculateSpaceDistance(
     } else {
       // Skew Lines (异面直线)
       relation = 'skew';
-      distDecimal = Math.abs(scalarTriple) / crossMag;
-      const exact = formatExactDistance(Math.abs(scalarTriple), crossMag * crossMag);
+      const numSq = scalarTriple * scalarTriple;
+      const denSq = Math.round(crossMag * crossMag);
+      const dSq = new Fraction(numSq, denSq);
+      const exact = simplifyRadicalFraction(dSq);
       distLatex = exact.latex;
+      distDecimal = exact.decimal;
 
       // Step 1: Normal vector to both lines
       steps.push({

@@ -197,10 +197,40 @@ Relation: ${calcResult3D.message}`;
     setTimeout(() => setCopiedAll(false), 2000);
   };
 
+  // URL hash sync on mount
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && hash.includes('a1=')) {
+      const params = new URLSearchParams(hash.replace('#', ''));
+      const a1 = Number(params.get('a1'));
+      const b1 = Number(params.get('b1'));
+      const c1 = Number(params.get('c1'));
+      const a2 = Number(params.get('a2'));
+      const b2 = Number(params.get('b2'));
+      const c2 = Number(params.get('c2'));
+      const dim = params.get('dim');
+      const urlLang = params.get('lang');
+
+      if (!isNaN(a1) && !isNaN(b1) && !isNaN(c1) && !isNaN(a2) && !isNaN(b2) && !isNaN(c2)) {
+        setL1({ a: a1, b: b1, c: c1 });
+        setL2({ a: a2, b: b2, c: c2 });
+        setSmartTextL1(formatLineLatex(a1, b1, c1));
+        setSmartTextL2(formatLineLatex(a2, b2, c2));
+      }
+      if (dim === '2D' || dim === '3D') {
+        setDimension(dim);
+      }
+      if (urlLang && ['en', 'es', 'fr', 'pt', 'zh'].includes(urlLang)) {
+        setLang(urlLang as SupportedLanguage);
+      }
+    }
+  }, []);
+
   // Share Problem URL
   const handleShareProblem = () => {
     const hash = `#a1=${l1.a}&b1=${l1.b}&c1=${l1.c}&a2=${l2.a}&b2=${l2.b}&c2=${l2.c}&dim=${dimension}&lang=${lang}`;
-    const url = `https://parallel-lines-distance-calculator.formulacalckit.com/${hash}`;
+    window.location.hash = hash;
+    const url = window.location.origin + window.location.pathname + hash;
     navigator.clipboard.writeText(url);
     setShareToast(true);
     setTimeout(() => setShareToast(false), 2500);
