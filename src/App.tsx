@@ -455,7 +455,7 @@ export default function App() {
                       </div>
                     </div>
                     <div className="text-[11px] text-slate-500 font-mono mt-1">
-                      {p.l1.a}x+{p.l1.b}y+{p.l1.c}=0
+                      {formatLineLatex(p.l1.a, p.l1.b, p.l1.c)}
                     </div>
                   </button>
                 );
@@ -796,14 +796,18 @@ export default function App() {
                   </span>
                   <span
                     className={`text-xs sm:text-sm px-3 py-1 rounded-full font-bold border ${
-                      calcResult2D.check.isParallel && !calcResult2D.check.isCoincident
+                      !calcResult2D.check.isLine1Valid || !calcResult2D.check.isLine2Valid
+                        ? 'bg-rose-50 text-rose-700 border-rose-200'
+                        : calcResult2D.check.isParallel && !calcResult2D.check.isCoincident
                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                         : calcResult2D.check.isCoincident
                         ? 'bg-blue-50 text-blue-700 border-blue-200'
                         : 'bg-rose-50 text-rose-700 border-rose-200'
                     }`}
                   >
-                    {calcResult2D.check.isParallel && !calcResult2D.check.isCoincident
+                    {!calcResult2D.check.isLine1Valid || !calcResult2D.check.isLine2Valid
+                      ? (lang === 'zh' ? '方程无效' : 'Invalid Equation')
+                      : calcResult2D.check.isParallel && !calcResult2D.check.isCoincident
                       ? t.statusStrictlyParallel
                       : calcResult2D.check.isCoincident
                       ? t.statusCoincident
@@ -817,7 +821,7 @@ export default function App() {
                       {t.exactValueLabel}
                     </div>
                     <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                      <MathView math={`d = ${calcResult2D.exactDistance.latex}`} />
+                      <MathView math={`d = ${!calcResult2D.check.isLine1Valid || !calcResult2D.check.isLine2Valid ? '\\text{N/A}' : calcResult2D.exactDistance.latex}`} />
                     </div>
                   </div>
 
@@ -826,7 +830,7 @@ export default function App() {
                       {t.decimalLabel}
                     </div>
                     <div className="text-2xl sm:text-3xl font-mono font-bold text-blue-600">
-                      ≈ {calcResult2D.exactDistance.decimal.toFixed(4)}
+                      {!calcResult2D.check.isLine1Valid || !calcResult2D.check.isLine2Valid ? 'N/A' : `≈ ${calcResult2D.exactDistance.decimal.toFixed(4)}`}
                     </div>
                   </div>
                 </div>

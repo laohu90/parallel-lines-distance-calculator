@@ -417,13 +417,18 @@ export function calculateParallelDistance(
     const y0 = sampleP.y;
     const deltaNum = unifiedC2Fraction.sub(unifiedC1);
 
+    const partA = unifiedA !== 0 ? `${unifiedA}(${x0})` : '';
+    const partB = unifiedB !== 0 ? `${unifiedB >= 0 && partA ? ' + ' : (unifiedB < 0 ? ' - ' : '')}${Math.abs(unifiedB)}(${y0})` : '';
+    const partC = unifiedC1 !== 0 ? `${unifiedC1 >= 0 && (partA || partB) ? ' + ' : (unifiedC1 < 0 ? ' - ' : '')}${Math.abs(unifiedC1)}` : '';
+    const substLatex = `${partA}${partB}${partC} = 0`;
+
     completingSquareMethod.push({
       id: 'sq-1',
       stepNumber: 1,
       title: st.sq1Title,
       badgeText: st.sq1Badge,
       description: st.sq1Desc(formatLineLatex(unifiedA, unifiedB, unifiedC1)),
-      latexFormula: `P(${x0},\\; ${y0}) \\in l_1 \\implies ${unifiedA}(${x0}) + ${unifiedB}(${y0}) + (${unifiedC1}) = 0`,
+      latexFormula: `P(${x0},\\; ${y0}) \\in l_1 \\implies ${substLatex}`,
       keyTakeaway: st.sq1Takeaway(x0, y0),
     });
 
